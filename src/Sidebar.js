@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "./Sidebar.css";
 import FiberManualRecordIcon from "@material-ui/icons/FiberManualRecord";
-import CreateIcon from "@material-ui/icons/Create";
+// import CreateIcon from "@material-ui/icons/Create";
 import InsertCommentIcon from "@material-ui/icons/InsertComment";
 import SidebarOption from "./SidebarOption";
 import InboxIcon from "@material-ui/icons/Inbox";
@@ -13,6 +13,7 @@ import FileCopyIcon from "@material-ui/icons/FileCopy";
 import ExpandLessIcon from "@material-ui/icons/ExpandLess";
 import ExpandMoreIcon from "@material-ui/icons/ExpandMore";
 import AddIcon from "@material-ui/icons/Add";
+import TagIcon from '@mui/icons-material/Tag';
 import db from "./firebase";
 
 function Sidebar() {
@@ -20,14 +21,15 @@ function Sidebar() {
 
   useEffect(() => {
     // Run this code ONCE when the sidebar component load
-    db.collection("rooms").onSnapshot((snapshot) =>
+    db.collection('rooms').onSnapshot((snapshot) => {
       setChannels(
         snapshot.docs.map((doc) => ({
           id: doc.id,
-          name: doc.data(),
+          // doc.data() have both name and message but here we only extract name data.
+          name: doc.data().name,
         }))
-      )
-    );
+      );
+    });
   }, []);
   
   return (
@@ -40,7 +42,6 @@ function Sidebar() {
             Kushagra
           </h3>
         </div>
-        <CreateIcon />
       </div>
       <SidebarOption Icon={InsertCommentIcon} title="Threads" />
       <SidebarOption Icon={InboxIcon} title="Mention & reaction" />
@@ -57,11 +58,14 @@ function Sidebar() {
 
       {/* Connect to Database and list all channel*/}
 
-      {channels.map(channel => (
-        <SidebarOption title={channel.name} id={channel.id} />
-      ))}
-      
+      { channels.map(channel =>
+      <SidebarOption 
+      Icon={TagIcon} 
+      title={channel.name} 
+      id={channel.id} />)
+    }
     </div>
   );
 }
+
 export default Sidebar;
